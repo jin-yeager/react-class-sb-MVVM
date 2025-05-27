@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mem">
+
+	<!-- 1) 전체 조회 -->
+	<select id="selectList"
+			parameterType="shop.ingong.myba.MemVo"
+			resultType   ="shop.ingong.myba.MemVo">
+		SELECT
+			M_ID,
+			M_NAME,
+			TEL,
+			EMAIL
+		FROM MEM
+	</select>
+
+	<!-- 2) 단건 조회 -->
+	<select id="select"
+			parameterType="shop.ingong.myba.MemVo"
+			resultType   ="shop.ingong.myba.MemVo">
+		SELECT
+			M_ID,
+			M_NAME,
+			TEL,
+			EMAIL
+		FROM MEM
+		WHERE M_ID = #{m_id}
+	</select>
+
+	<!-- 3) 등록 -->
+	<update id="insert"
+			parameterType="shop.ingong.myba.MemVo">
+		INSERT INTO MEM (M_ID, M_NAME, TEL, EMAIL)
+		VALUES (#{m_id}, #{m_name}, #{tel}, #{email})
+	</update>
+
+	<!-- 4) 수정 -->
+	<update id="update"
+			parameterType="shop.ingong.myba.MemVo">
+		UPDATE MEM
+		SET
+			M_NAME = #{m_name},
+			TEL    = #{tel},
+			EMAIL  = #{email}
+		WHERE M_ID = #{m_id}
+	</update>
+
+	<!-- 5) 삭제 -->
+	<update id="delete"
+			parameterType="shop.ingong.myba.MemVo">
+		DELETE FROM MEM
+		WHERE M_ID = #{m_id}
+	</update>
+
+</mapper>
