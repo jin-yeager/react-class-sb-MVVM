@@ -20,5 +20,6 @@
 
 	<mappers>
 		<mapper resource="shop/ingong/myba/mem.xml"/>
+		<mapper resource="shop/ingong/myba/emp.xml"/>
 	</mappers>
 </configuration>

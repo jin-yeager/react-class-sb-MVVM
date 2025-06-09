@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="emp">
+
+	<!-- 1) 전체 조회 -->
+	<select id="selectList"
+			parameterType="shop.ingong.myba.EmpVo"
+			resultType="shop.ingong.myba.EmpVo">
+		SELECT
+			E_ID   AS e_id,
+			E_NAME AS e_name,
+			GEN    AS gen,
+			ADDR   AS addr
+		FROM EMP
+		ORDER BY E_ID
+	</select>
+
+	<!-- 2) 단건 조회 -->
+	<select id="select"
+			parameterType="shop.ingong.myba.EmpVo"
+			resultType="shop.ingong.myba.EmpVo">
+		SELECT
+			E_ID   AS e_id,
+			E_NAME AS e_name,
+			GEN    AS gen,
+			ADDR   AS addr
+		FROM EMP
+		WHERE E_ID = #{e_id}
+	</select>
+
+	<!-- 3) 등록 -->
+	<insert id="insert"
+			parameterType="shop.ingong.myba.EmpVo">
+		INSERT INTO EMP (E_ID, E_NAME, GEN, ADDR)
+		VALUES (SEQ_E_ID.NEXTVAL, #{e_name}, #{gen}, #{addr})
+	</insert>
+
+	<!-- 4) 수정 -->
+	<update id="update"
+			parameterType="shop.ingong.myba.EmpVo">
+		UPDATE EMP
+		SET
+			E_NAME = #{e_name},
+			GEN    = #{gen},
+			ADDR   = #{addr}
+		WHERE E_ID = #{e_id}
+	</update>
+
+	<!-- 5) 삭제 -->
+	<delete id="delete"
+			parameterType="shop.ingong.myba.EmpVo">
+		DELETE FROM EMP
+		WHERE E_ID = #{e_id}
+	</delete>
+
+</mapper>

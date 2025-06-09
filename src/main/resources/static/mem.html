@@ -5,96 +5,91 @@
   <title>회원 목록 조회</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    // 폼 초기화
-    function fn_clearForm() {
-      document.getElementById('m_id').value    = '';
-      document.getElementById('m_name').value  = '';
-      document.getElementById('tel').value     = '';
-      document.getElementById('email').value  = '';
-    }
-
-    // 전체 목록 조회 (GET /mem)
+    // 전체 목록 조회 (GET /mem_list.ajax)
     function fn_list() {
-      axios.get('/mem')
+      axios.get('/mem_list.ajax')
               .then(response => {
-                const list = response.data;
+                const list = response.data.list;
                 const tbody = document.getElementById('my_tbody');
                 tbody.innerHTML = list.length
                         ? list.map(vo => `
-                            <tr>
-                              <td><a href="javascript:fn_one(${vo.m_id})">${vo.m_id}</a></td>
-                              <td>${vo.m_name}</td>
-                              <td>${vo.tel}</td>
-                              <td>${vo.email}</td>
-                            </tr>
-                          `).join('')
+              <tr>
+                <td><a href="javascript:fn_one('${vo.m_id}')">${vo.m_id}</a></td>
+                <td>${vo.m_name}</td>
+                <td>${vo.tel}</td>
+                <td>${vo.email}</td>
+              </tr>
+            `).join('')
                         : '<tr><td colspan="4">데이터가 없습니다</td></tr>';
               })
               .catch(err => console.error('list error', err));
     }
 
-    // 단건 조회 (GET /mem/{id})
+    // 단건 조회 (GET /mem_detail.ajax)
     function fn_one(id) {
-      axios.get(`/mem/${id}`)
+      axios.get('/mem_detail.ajax', { params: { m_id: id } })
               .then(res => {
-                const vo = res.data;
+                const vo = res.data.vo;
                 document.getElementById('m_id').value    = vo.m_id;
                 document.getElementById('m_name').value  = vo.m_name;
                 document.getElementById('tel').value     = vo.tel;
-                document.getElementById('email').value  = vo.email;
+                document.getElementById('email').value   = vo.email;
               })
               .catch(err => console.error('detail error', err));
     }
 
-    // 등록 (POST /mem)
+    // 등록 (POST /mem_add.ajax)
     function fn_add() {
       const data = {
-        m_id:    document.getElementById('m_id').value,
-        m_name:  document.getElementById('m_name').value,
-        tel:     document.getElementById('tel').value,
+        m_id:   document.getElementById('m_id').value,
+        m_name: document.getElementById('m_name').value,
+        tel:    document.getElementById('tel').value,
         email:  document.getElementById('email').value
       };
-      axios.post('/mem', data)
-              .then(() => {
-                alert(`추가되었습니다. ID: ${data.m_id}`);
-                fn_list();
-                fn_clearForm();
+      axios.post('/mem_add.ajax', data)
+              .then(res => {
+                if (res.data.cnt > 0) {
+                  alert(`추가되었습니다. ID: ${data.m_id}`);
+                  fn_list(); fn_clearForm();
+                }
               })
               .catch(err => console.error('add error', err));
     }
 
-    // 수정 (POST /mem/mod)
+    // 수정 (POST /mem_mod.ajax)
     function fn_mod() {
       const data = {
-        m_id:    document.getElementById('m_id').value,
-        m_name:  document.getElementById('m_name').value,
-        tel:     document.getElementById('tel').value,
+        m_id:   document.getElementById('m_id').value,
+        m_name: document.getElementById('m_name').value,
+        tel:    document.getElementById('tel').value,
         email:  document.getElementById('email').value
       };
-      axios.post('/mem/mod', data)  // PUT에서 POST로 변경
+      axios.post('/mem_mod.ajax', data)
               .then(res => {
-                alert(`정상적으로 수정되었습니다. ID: ${data.m_id}`);
-                fn_list();
-                fn_clearForm();
+                if (res.data.cnt > 0) {
+                  alert(`정상적으로 수정되었습니다. ID: ${data.m_id}`);
+                  fn_list(); fn_clearForm();
+                }
               })
               .catch(err => console.error('update error', err));
     }
 
-    // 삭제 (POST /mem/del)
+    // 삭제 (POST /mem_del.ajax)
     function fn_del() {
       const id = document.getElementById('m_id').value;
       if (!id) return alert('삭제할 ID를 입력하세요.');
-      if (confirm("정말 삭제하시겠습니까?")) {
-        axios.post(`/mem/del`, { m_id: id })  // DELETE에서 POST로 변경
-                .then(() => {
+      if (!confirm("정말 삭제하시겠습니까?")) return;
+      axios.post('/mem_del.ajax', { m_id: id })
+              .then(res => {
+                if (res.data.cnt > 0) {
                   alert(`정상적으로 삭제되었습니다. ID: ${id}`);
-                  fn_list();
-                  fn_clearForm();
-                })
-                .catch(err => console.error('delete error', err));
-      }
+                  fn_list(); fn_clearForm();
+                }
+              })
+              .catch(err => console.error('delete error', err));
     }
   </script>
+
 </head>
 <!--<body onload="fn_list()">-->
 <body>

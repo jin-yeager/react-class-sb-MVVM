@@ -1,50 +1,85 @@
 package shop.ingong.demo;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletResponse;
 import shop.ingong.myba.DaoMem;
 import shop.ingong.myba.MemVo;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
-@RequestMapping("/mem")
 public class MemController {
+    @GetMapping("/mem_list.ajax")
+    public Map<String, Object> ajax_emp_list(HttpServletResponse resp) throws IOException {
+        DaoMem dm = new DaoMem();
+        ArrayList<MemVo> list = dm.selectList();
 
-    private final DaoMem dao = new DaoMem();
-
-    // 전체 조회
-    @GetMapping
-    public List<MemVo> list() {
-        return dao.selectList();
+        HashMap<String, Object> map = new HashMap();
+        map.put("list", list);
+        return map;
     }
 
-    // 단건 조회
-    @GetMapping("/{id}")
-    public MemVo one(@PathVariable int id) {
-        // id를 사용하여 MemVo 객체를 생성
-        MemVo vo = new MemVo(id, "", "", "");  // 나머지 필드는 빈 문자열로 초기화
-        return dao.select(vo);  // 생성한 MemVo 객체를 사용해 데이터 조회
+    @GetMapping("/mem_detail.ajax")
+    public Map<String, Object> ajax_emp_detail(@RequestParam String m_id,HttpServletResponse resp) throws IOException {
+
+        System.out.println(m_id);
+        DaoMem dm = new DaoMem();
+        MemVo vo = dm.select(new MemVo(m_id, "", "", ""));
+
+
+        HashMap<String, Object> map = new HashMap();
+        map.put("vo", vo);
+        return map;
     }
 
-    // 추가
-    @PostMapping
-    public Map<String, Integer> add(@RequestBody MemVo vo) {
-        int cnt = dao.insert(vo);
-        return Map.of("cnt", cnt);
+    @PostMapping("/mem_add.ajax")
+    public Map<String, Object> ajax_mem_add(@RequestBody MemVo pvo,HttpServletResponse resp) throws IOException {
+
+        System.out.println(pvo);
+        DaoMem dm = new DaoMem();
+        int cnt = dm.insert(pvo);
+
+
+        HashMap<String, Object> map = new HashMap();
+        map.put("cnt", cnt);
+        return map;
     }
 
-    // 수정
-    @PostMapping("/mod")
-    public Map<String, Integer> mod(@RequestBody MemVo vo) {
-        int cnt = dao.update(vo);
-        return Map.of("cnt", cnt);
+    @PostMapping("/mem_mod.ajax")
+    public Map<String, Object> ajax_mem_mod(@RequestBody MemVo pvo,HttpServletResponse resp) throws IOException {
+
+        System.out.println(pvo);
+        DaoMem dm = new DaoMem();
+        int cnt = dm.update(pvo);
+
+
+        HashMap<String, Object> map = new HashMap();
+        map.put("cnt", cnt);
+        return map;
     }
 
-    /** 삭제 (POST /mem/del) */
-    @PostMapping("/del")
-    public Map<String, Integer> del(@RequestBody MemVo vo) {
-        int cnt = dao.delete(vo);
-        return Map.of("cnt", cnt);
+    @PostMapping("/mem_del.ajax")
+    public Map<String, Object> ajax_mem_del(@RequestBody MemVo pvo,HttpServletResponse resp) throws IOException {
+
+        System.out.println(pvo);
+        DaoMem dm = new DaoMem();
+        int cnt = dm.delete(pvo);
+
+
+        HashMap<String, Object> map = new HashMap();
+        map.put("cnt", cnt);
+        return map;
     }
 }
+
+
